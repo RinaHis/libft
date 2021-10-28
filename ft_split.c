@@ -12,114 +12,34 @@
 
 #include "libft.h"
 
-//static int	count_words(const char *str, char c)
-//{
-//	int	i;
-//	int	trigger;
-//
-//	i = 0;
-//	trigger = 0;
-//	while (*str)
-//	{
-//		if (*str != c && trigger == 0)
-//		{
-//			trigger = 1;
-//			i++;
-//		}
-//		else if (*str == c)
-//			trigger = 0;
-//		str++;
-//	}
-//	return (i);
-//}
-//
-//static char	*word_dup(const char *str, int start, int finish)
-//{
-//	char	*word;
-//	int		i;
-//
-//	i = 0;
-//	word = (char *)malloc((finish - start + 1) * sizeof(char));
-//	if (!word)
-//		return (word);
-//	while (start < finish)
-//		word[i++] = str[start++];
-//	word[i] = '\0';
-//	return (word);
-//}
-//
-//static char **ft_dop(char *s, char c, int index, char **arr_words, size_t i)
-//{
-//	int j;
-//
-//	j = 0;
-//	while (i <= ft_strlen(s))
-//	{
-//		if (s[i] != c && index < 0)
-//			index = 1;
-//		else if ((s[i] == c || i == ft_strlen(s)) && index >= 0)
-//		{
-//			arr_words[j] = word_dup(s, index, i);
-//			if (!arr_words[j])
-//			{
-//				while (j != 0)
-//					free(arr_words[j-- - 1]);
-//				free(arr_words);
-//				return ((char **)0);
-//			}
-//			index = -1;
-//			j++;
-//		}
-//		i++;
-//	}
-//	arr_words[j] = 0;
-//	return (arr_words);
-//}
-//
-//char	**ft_split(char const *s, char c)
-//{
-//	int		index;
-//	char	**arr_words;
-//	size_t 		i;
-//
-//	i = 0;
-//	if (!s)
-//		return (NULL);
-//	arr_words = malloc((count_words(s, c) + 1) * sizeof(char *));
-//	if (!s || !(arr_words))
-//		return (0);
-//	index = -1;
-//	arr_words = ft_dop((char *)s, c, index, arr_words, i);
-//	return (arr_words);
-//}
 static size_t	count_words(char const *s, char c)
 {
-	size_t	word_count;
-	int		delim;
+	size_t	word;
+	int		trigger;
 
-	word_count = 0;
-	delim = 1;
+	word = 0;
+	trigger = 1;
 	while (*s)
 	{
-		if (*s != c && delim)
+		if (*s != c && trigger)
 		{
-			delim = 0;
-			word_count++;
+			trigger = 0;
+			word++;
 		}
 		else if (*s == c)
-			delim = 1;
+			trigger = 1;
 		s++;
 	}
-	return (word_count);
+	return (word);
 }
 
-static void	make_words(char **words, char const *s, char c, size_t n_words)
+static void	word_dup(char **words, char const *s, char c, size_t arr_words)
 {
 	char	*ptr_c;
 
 	while (*s && *s == c)
 		s++;
-	while (n_words--)
+	while (arr_words--)
 	{
 		ptr_c = ft_strchr(s, c);
 		if (ptr_c != NULL)
@@ -138,15 +58,15 @@ static void	make_words(char **words, char const *s, char c, size_t n_words)
 
 char	**ft_split(char const *s, char c)
 {
-	size_t	num_words;
+	size_t	index;
 	char	**words;
 
 	if (s == NULL)
 		return (NULL);
-	num_words = count_words(s, c);
-	words = malloc(sizeof(char **) * (num_words + 1));
+	index = count_words(s, c);
+	words = malloc(sizeof(char **) * (index + 1));
 	if (words == NULL)
 		return (NULL);
-	make_words(words, s, c, num_words);
+	word_dup(words, s, c, index);
 	return (words);
 }
